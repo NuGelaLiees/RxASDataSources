@@ -35,7 +35,13 @@ open class ASTableSectionedDataSource<S: SectionModelType>: NSObject, ASTableDat
     }
 
     fileprivate static func configureCellBlockNotSet(dataSource: ASTableSectionedDataSource<S>, node: ASTableNode, indexPath: IndexPath, model: I) -> ASCellNodeBlock {
-        return { dataSource.tableNode(node, nodeForRowAt: indexPath) }
+        return {
+            let cell = DispatchQueue.main.sync(execute: { () -> ASCellNode in
+                return dataSource.tableNode(node, nodeForRowAt: indexPath)
+            })
+
+            return cell
+        }
     }
 
     #if os(iOS)
